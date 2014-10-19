@@ -51,8 +51,6 @@ def convert(inputPath, hdfFilename):  # , metadataPath='/'):
             The path of the directory where all the csv files are supposed to be stored
     hdfFilename: str
             The path of the h5 file where all the standardized data is supposed to go. The path should refer to a particular file and not just a random directory in order for this to work.
-    metadataPath: str
-            The path of the directory where the metadata is stored. By default, it is the root directory.	
 
     '''
     files = [f for f in listdir(inputPath) if isfile(join(inputPath, f)) and '.csv' in f and '.swp' not in f]

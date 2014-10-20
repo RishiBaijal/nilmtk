@@ -54,6 +54,7 @@ def convert(inputPath, hdfFilename):  # , metadataPath='/'):
 
     '''
     files = [f for f in listdir(inputPath) if isfile(join(inputPath, f)) and '.csv' in f and '.swp' not in f]
+    files.sort()
     assert isdir(inputPath)
     store = HDFStore(hdfFilename)
     for i, csv_file in enumerate(files):  # range(len(files)):
@@ -76,3 +77,4 @@ def convert(inputPath, hdfFilename):  # , metadataPath='/'):
     metadataPath = join(_get_module_directory(), 'metadata')
     print('Processing metadata...')
     convert_yaml_to_hdf5(metadataPath, hdfFilename)
+

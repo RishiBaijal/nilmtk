@@ -51,6 +51,8 @@ def convert(inputPath, hdfFilename):  # , metadataPath='/'):
             The path of the directory where all the csv files are supposed to be stored
     hdfFilename: str
             The path of the h5 file where all the standardized data is supposed to go. The path should refer to a particular file and not just a random directory in order for this to work.
+    Example usage:
+	convert('/Users/rishi/Documents/Master_folder/IIITD/5th_semester/Independent_Project/AMPds/electricity', '/Users/rishi/Documents/Master_folder/IIITD/5th_semester/Independent_Project/AMPds/electricity/store.h5')
 
     '''
     files = [f for f in listdir(inputPath) if isfile(join(inputPath, f)) and '.csv' in f and '.swp' not in f]
@@ -78,4 +80,3 @@ def convert(inputPath, hdfFilename):  # , metadataPath='/'):
     metadataPath = join(_get_module_directory(), 'metadata')
     print('Processing metadata...')
     convert_yaml_to_hdf5(metadataPath, hdfFilename)
-convert('/Users/rishi/Documents/Master_folder/IIITD/5th_semester/Independent_Project/AMPds/electricity', '/Users/rishi/Documents/Master_folder/IIITD/5th_semester/Independent_Project/AMPds/electricity/store.h5')

@@ -49,5 +49,40 @@ class TestElecMeter(WarningTestMixin, unittest.TestCase):
         meter3 = ElecMeter(metadata={'submeter_of': 2}, meter_id=METER_ID3)
         self.assertEquals(meter3.upstream_meter(), meter2)
 
+
+    def test_correlation(self):
+        meter1 = ElecMeter(store=self.datastore, metadata=self.meter_meta, meter_id=METER_ID)
+        meter2 = ElecMeter(store=self.datastore, metadata=self.meter_meta, meter_id=METER_ID2)
+        meter3 = ElecMeter(store=self.datastore, metadata=self.meter_meta, meter_id=METER_ID3)
+        m1=self.datastore.store.get('/building1/elec/meter1')
+        m2=self.datastore.store.get('/building1/elec/meter2')
+        m3=self.datastore.store.get('/building1/elec/meter3')
+    
+    # Correlation using the pandas function
+    
+        cor_pandas_11=m1.corrwith(m1)
+        cor_pandas_12=m1.corrwith(m2)
+        cor_pandas_13=m1.corrwith(m3)
+        cor_pandas_22=m2.corrwith(m2)
+        cor_pandas_23=m2.corrwith(m3)
+        cor_pandas_33=m3.corrwith(m3)
+    
+    #Correlation using NILMTK
+    
+    
+        cor_nilm_11=meter1.correlation(meter1)
+        cor_nilm_12=meter1.correlation(meter2)
+        cor_nilm_13=meter1.correlation(meter3)
+        cor_nilm_22=meter2.correlation(meter2)
+        cor_nilm_23=meter2.correlation(meter3)
+        cor_nilm_33=meter3.correlation(meter3)
+    
+        self.assertEquals(cor_nilm_11, cor_pandas_11)
+        self.assertEquals(cor_nilm_12, cor_pandas_12)
+        self.assertEquals(cor_nilm_13, cor_pandas_13)
+        self.assertEquals(cor_nilm_22, cor_pandas_22)
+        self.assertEquals(cor_nilm_13, cor_pandas_23)
+        self.assertEquals(cor_nilm_33, cor_pandas_33)
+
 if __name__ == '__main__':
     unittest.main()

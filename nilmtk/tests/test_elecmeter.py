@@ -77,12 +77,12 @@ class TestElecMeter(WarningTestMixin, unittest.TestCase):
         cor_nilm_23=meter2.correlation(meter3)
         cor_nilm_33=meter3.correlation(meter3)
     
-        self.assertEquals(cor_nilm_11, cor_pandas_11)
-        self.assertEquals(cor_nilm_12, cor_pandas_12)
-        self.assertEquals(cor_nilm_13, cor_pandas_13)
-        self.assertEquals(cor_nilm_22, cor_pandas_22)
-        self.assertEquals(cor_nilm_13, cor_pandas_23)
-        self.assertEquals(cor_nilm_33, cor_pandas_33)
+        self.assertEqual(cor_nilm_11, cor_pandas_11)
+        self.assertEqual(cor_nilm_12, cor_pandas_12)
+        self.assertEqual(cor_nilm_13, cor_pandas_13)
+        self.assertEqual(cor_nilm_22, cor_pandas_22)
+        self.assertEqual(cor_nilm_23, cor_pandas_23)
+        self.assertEqual(cor_nilm_33, cor_pandas_33)
 
 if __name__ == '__main__':
     unittest.main()

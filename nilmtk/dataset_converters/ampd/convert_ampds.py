@@ -80,3 +80,7 @@ def convert(inputPath, hdfFilename):  # , metadataPath='/'):
     metadataPath = join(_get_module_directory(), 'metadata')
     print('Processing metadata...')
     convert_yaml_to_hdf5(metadataPath, hdfFilename)
+
+
+convert('/Users/rishi/Documents/Master_folder/IIITD/5th_semester/Independent_Project/AMPds/electricity', '/Users/rishi/Documents/Master_folder/IIITD/5th_semester/Independent_Project/AMPds/electricity/copy_to_data_folder.h5')
+

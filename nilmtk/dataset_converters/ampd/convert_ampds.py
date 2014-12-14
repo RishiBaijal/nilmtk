@@ -61,12 +61,12 @@ def convert(inputPath, hdfFilename):  # , metadataPath='/'):
     store = HDFStore(hdfFilename)
     for i, csv_file in enumerate(files):  # range(len(files)):
         # sent=files[i]
-        key = Key(building=1, meter=(i + 2))
+        key = Key(building=1, meter=(i + 1))
         print('Loading file #', (i + 1), ' : ', csv_file, '. Please wait...')
         fp = pd.read_csv(join(inputPath, csv_file))
         fp.TS = fp.TS.astype('int')
         fp.index = pd.to_datetime((fp.TS.values * 1e9).astype(int), utc=True)
-	fp=fp.tz_convert('Asia/Kolkata')
+        fp=fp.tz_convert('Asia/Kolkata')
         fp = fp.drop('TS', 1)
         fp.rename(columns=lambda x: columnNameMapping[x], inplace=True)
         fp.columns.set_names(LEVEL_NAMES, inplace=True)

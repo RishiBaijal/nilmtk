@@ -30,7 +30,8 @@ from nilmtk.utils import check_directory_exists
 from nilm_metadata import *
 from inspect import currentframe, getfile, getsourcefile
 from sys import getfilesystemencoding
-
+import cProfile
+import time
 
 import warnings
 warnings.filterwarnings("ignore")
@@ -56,28 +57,86 @@ def test_all(path_to_directory):
     try:
         for i, file in enumerate(files):
             current_file=DataSet(join(path_to_directory, file))
+            
             print ("Printing metadata for current file...done.")
             print_dict(current_file.metadata)
             print (" Loading file # ", i, " : ", file, ". Please wait.")
             for building_number in range(1, len(current_file.buildings)+1):
     #Examine metadata for a single house
+                elec=current_file.buildings[building_number].elec
+                print ("The dataset being processed is : ", elec.dataset())
                 print ("Metadata for current file: ")
                 print_dict(current_file.buildings[building_number].metadata)
-
+                print ("Appliance label information: ", elec.appliance_label())
+                #print (elec.appliances)
+                print ("Appliances:- ")
+                for i in elec.appliances:
+                    print (i)
 
                 print ("Examining sub-metered appliances...")
-                elec=current_file.buildings[building_number].elec
-                print ("MeterGroup object of current file...")
-                print (elec)
-                print (elec.appliances)
+                
+                
+                print ("Collecting stats on meters...Done.")
+                print (elec._collect_stats_on_all_meters)
+                
+                print ("Timeframe: ", elec.get_timeframe())
+                
+                
+                
+                
+                print ("Available power AC types: ", elec.available_power_ac_types())
+                
+                print ("Clearing cache...done.")
+                elec.clear_cache()
+                
+                print ("Testing if there are meters from multiple buildings. Result returned by method: ", elec.contains_meters_from_multiple_buildings())
+                
+                # TODO: Find a better way to test the correlation function
+                # print ("Testing the correlation function. ", elec.correlation(elec))
+                
+                
+                print ("List of disabled meters: ", elec.disabled_meters)
+                print ("Trying to determine the dominant appliance: ")
+                try:
+                    elec.dominant_appliance()
+                except RuntimeError:
+                    print ('''More than one dominant appliance in MeterGroup! (The dominant appliance per meter should be manually specified in the metadata. If it isn't and if there are multiple appliances for a meter then NILMTK assumes all appliances on that meter are dominant. NILMTK can't automatically distinguish between multiple appliances on the same meter (at least, not without using NILM!))''')
+                    pass
 
+                
+                
+
+#print ("Average energy per period: ", elec.average_energy_per_period())
+                
+                
+                print ("Executing functions...")
+                lis=[]
+                func=""
+                '''for function in dir(elec):
+                    try:
+                        start=time.time()
+                        if ("__" not in function or "dataframe_of_meters" not in function):
+                            func=getattr(elec, function)
+                        print ("Currently executing ", function, ". Please wait...")
+                        print (func())
+                        # print ("cProfile stats - printed")
+                        # cProfile.run("func")
+                        end=time.time()
+                        print ("Time taken for the entire process : ", (end - start))
+                    except AttributeError:
+                        print ("Attribute error occured. ")
+                    except TypeError:
+                        lis.append(function)
+                        print ("Warning: TypeError")
+                        pass'''
+                
                 print ("Plotting wiring hierarchy of meters....")
                 elec.draw_wiring_graph()
-
-                appliance_type="fridge"
+                ## DISAGGREGATION STARTS HERE
+                appliance_type="unknown"
     #TODO : appliance_type should cycle through all appliances and check for each of them. For this, use a list.
                 selected_appliance=nilmtk.global_meter_group.select_using_appliances(type=appliance_type)
-                appliance_restricted = MeterGroup(selected_appliance.meters[:5])
+                appliance_restricted = MeterGroup(selected_appliance.meters)
                 if ((appliance_restricted.proportion_of_upstream_total_per_meter()) is not None):
                     proportion_per_appliance = appliance_restricted.proportion_of_upstream_total_per_meter()
 
@@ -87,21 +146,21 @@ def test_all(path_to_directory):
                     plt.ylabel('Proportion');
                     plt.xlabel('Appliance (<appliance instance>, <building instance>, <dataset name>)');
                     selected_appliance.select(building=building_number).total_energy()
-                    selected_appliance.select(building=61).plot();
+                    selected_appliance.select(building=1).plot();
 
 
-                    appliance_restricted = MeterGroup(fridges.meters[5])
+                    appliance_restricted = MeterGroup(selected_appliance.meters)
                     daily_energy = pd.DataFrame([meter.average_energy_per_period(offset_alias='D')
                                      for meter in appliance_restricted.meters])
 
                     daily_energy.plot(kind='hist');
-                    plt.title('Histogram of daily ', selected_appliance, ' energy');
+                    plt.title('Histogram of daily energy');
                     plt.xlabel('energy (kWh)');
                     plt.ylabel('Occurences');
                     plt.legend().set_visible(False)
-
+                    
                     current_file.store.window=TimeFrame(start='2012-04-01 00:00:00-05:00', end='2012-04-02 00:00:00-05:00')
-                    elec.plot();
+                    #elec.plot();
 
                     fraction = elec.submeters().fraction_per_meter().dropna()
 
@@ -148,10 +207,13 @@ def test_all(path_to_directory):
                     disag.store.close()
     except AttributeError:
         print ("AttributeError occured while executing. This means that the value returned by  proportion_per_appliance = appliance_restricted.proportion_of_upstream_total_per_meter() is None")
+        pass
 
 
 
 
 
-test_all('/Users/rishi/Documents/Master_folder/IIITD/5th_semester/Independent_Project/nilmtk/data/Location_of_h5')
+
+test_all('/Users/rishi/Documents/Master_folder/IIITD/5th_semester/Independent_Project/NILMTK_datasets')
+#test_all('/Users/rishi/Documents/Master_folder/IIITD/5th_semester/Independent_Project/nilmtk/data/Location_of_h5')
 

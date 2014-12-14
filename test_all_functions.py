@@ -102,6 +102,22 @@ def test_all(path_to_directory):
                 except RuntimeError:
                     print ('''More than one dominant appliance in MeterGroup! (The dominant appliance per meter should be manually specified in the metadata. If it isn't and if there are multiple appliances for a meter then NILMTK assumes all appliances on that meter are dominant. NILMTK can't automatically distinguish between multiple appliances on the same meter (at least, not without using NILM!))''')
                     pass
+                print ("Dropout rate: ", elec.dropout_rate())
+                try:
+                    print ("Calculating energy per meter:")
+                    print (elec.energy_per_meter())
+                
+                    print ("Calculating total entropy")
+                    print (elec.entropy())
+                
+                    print ("Calculating entropy per meter: ")
+                    print (elec.entropy_per_meter())
+                except ValueError:
+                    print ("ValueError: Total size of array must remain unchanged.")
+                    pass
+                
+                print ("Calculating fraction per meter.")
+                print (elec.fraction_per_meter())
 
                 
                 
